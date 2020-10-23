@@ -89,10 +89,10 @@ int minPath(vector<vector<int>> sq) {
     }
     
     for (int i = 0; i < n; i++) {
-               for (int j = 0; j < m; j++) {
-                   cout << path[i][j] << " ";
-               }
-               cout << endl;
-           }
+        for (int j = 0; j < m; j++) {
+            cout << path[i][j] << " ";
+        }
+        cout << endl;
+    }
     return path[m -1][n -1];
 }

@@ -12,95 +12,69 @@
 
 using namespace std;
 
-struct ListNode
-{
+struct LNode {
     int num;
-    ListNode *next;
-    ListNode(int x) : num(x), next(NULL) {}
+    LNode *next;
+    LNode(int n) : num(n), next(NULL) {}
 };
 
 
-ListNode * setupListNode(int num)
-{
-    ListNode *node = NULL;
+LNode *setupLNode(int num) {
+    LNode *node = NULL;
     
     int mm = num;
-    int i = 10;
-    float f = 1.0;
+    int f = 1;
     while (f >= 1) {
-        f = mm / 10.0;
-        int b = mm % i;
-        ListNode *temp = new ListNode(b);
+        f = mm/10;
+        LNode *temp = new LNode(mm%10);
         temp->next = node;
         node = temp;
-        mm = mm / i;
+        
+        mm = mm/10;
     }
     return node;
 }
 
-ListNode * sumTowListNode(ListNode *l1, ListNode *l2)
-{
-    ListNode * result = new ListNode(-1);
-    ListNode * head = result;
-//    ListNode *temp1 = l1;
-//    ListNode *temp2 = l2;
-      
-      // 进位
-      int carry = 0;
-      while (l1 || l2) {
-          int s = 0;
-          if (l1) {
-              s += l1->num;
-              l1 = l1->next;
-          }
-          if (l2) {
-              s += l2->num;
-              l2 = l2->next;
-          }
-          // 如果有进位需要再加1
-          if (carry) {
-              s++;
-          }
-          result->next = new ListNode(s % 10);
-          result = result->next;
-          carry = (s >= 10 ? 1 : 0);
-      }
+LNode *sumTowLNode(LNode *nl, LNode *ml) {
+    LNode *result = new LNode(0);
+    LNode *head = result;
+    LNode *temp = result;
+    // 进位标志
+    int carry = 0;
+    while (nl || ml || carry) {
+        int sum = 0;
+        if (nl) {
+            sum += nl->num;
+            nl = nl->next;
+        }
+        
+        if (ml) {
+            sum += ml->num;
+            ml = ml->next;
+        }
+        
+        // 处理进位，如果有进位则链表上一位需要+1 （因为逆序）
+        if (carry) {
+            temp->num += 1;
+        }
+        
+        carry = sum/10;
+        // 判断sum是否为0，防止链表已经结束，但末尾有进位导致循环后而外增加0
+        if (sum > 0) {
+            result->next = new LNode(sum%10);
+            temp = result;
+            result = result->next;
+        }
+    }
     
-    return head->next;
-//    vector<int> vl1;
-//    vector<int> vl2;
-//    while (temp1 || temp2) {
-//
-//        if (temp1) {
-//            vl1.push_back(temp1->num);
-//            temp1 = temp1->next;
-//        }else {
-//            vl1.push_back(0);
-//        }
-//
-//        if (temp2) {
-//            vl2.push_back(temp2->num);
-//            temp2 = temp2->next;
-//        }else {
-//            vl2.push_back(0);
-//        }
-//    }
-//
-//    vector<int>::size_type size = vl1.size();
-//    int e = 1;
-//    for (int i = 0; i < size; i++) {
-//        int nl1 = vl1[i];
-//        int nl2 = vl2[i];
-//
-//        int flag = (nl1 + nl2) * 0.1;
-//        int tempNum = ((nl1 + nl2) % 10) * e + flag * e * 10;
-//        result += tempNum;
-//
-//        e *= 10;
-//    }
-    
-//    return result;
-}
+     return head->num > 0 ? head : head->next;
+};
+
+
+/** 给出两个 非空 的链表用来表示两个非负的整数。其中，他们各自的位置是按照 逆序 的方式存储的，并且他们的每个节点只能存储 一位 数字。
+ *  如果，我们将这两个数相加起来，则会返回一个新的链表来表示他们的和。
+ *  可以假设出了数字0之外，这两个数都不会以0开头。
+*/
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
@@ -110,16 +84,16 @@ int main(int argc, const char * argv[]) {
         cin >> n;
         cin >> m;
         
-        ListNode *nList = setupListNode(n);
-        ListNode *mList = setupListNode(m);
+        LNode *nl = setupLNode(n);
+        LNode *ml = setupLNode(m);
         
-        ListNode *rel = sumTowListNode(nList, mList);
-        while (rel) {
-            cout << rel->num;
-            if (rel->next) {
+        LNode *result = sumTowLNode(nl, ml);
+        while (result) {
+            cout << result->num;
+            if (result->next) {
                 cout << "->";
             }
-            rel = rel->next;
+            result = result->next;
         }
     }
     return 0;
